@@ -1,0 +1,448 @@
+/* Смета в виде чертежа: синий лист с сеткой и белыми линиями */
+.spec {
+  position: relative;
+  pointer-events: auto;
+  padding: clamp(90px, 10vw, 130px) clamp(12px, 3vw, 40px) 0;
+  background-color: var(--blueprint);
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size:
+    120px 120px,
+    120px 120px,
+    24px 24px,
+    24px 24px;
+  color: #fff;
+}
+
+.spec__sheet {
+  position: relative;
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: clamp(24px, 4vw, 56px);
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+}
+
+/* внутренняя рамка листа */
+.spec__sheet::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  pointer-events: none;
+}
+
+.spec__head {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  align-items: end;
+  gap: 32px;
+  margin-bottom: clamp(32px, 5vw, 56px);
+}
+
+.spec__kicker {
+  display: block;
+  margin-bottom: 14px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.65;
+}
+
+.spec h2 {
+  font-size: clamp(2.6rem, 5.4vw, 5rem);
+}
+
+.spec em {
+  color: #f2b48a;
+}
+
+.spec__head p {
+  max-width: 440px;
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.6;
+}
+
+.spec__grid {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: clamp(28px, 4vw, 60px);
+  align-items: start;
+}
+
+.spec__planbox {
+  display: grid;
+  gap: 12px;
+}
+
+.spec__finish {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+/* План сверху: контуры «прорисовываются» при появлении */
+.plan {
+  width: 100%;
+  overflow: visible;
+}
+
+.plan * {
+  vector-effect: non-scaling-stroke;
+}
+
+.plan__wall {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 1.6s var(--ease);
+}
+
+.plan__wallfill {
+  fill: rgba(255, 255, 255, 0.85);
+  opacity: 0;
+  transition: opacity 0.8s 1.2s;
+}
+
+.plan__window {
+  fill: none;
+  stroke: #9fd0ff;
+  stroke-width: 1.5;
+  opacity: 0;
+  transition: opacity 0.6s 1.4s;
+}
+
+.plan__open {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.35);
+  stroke-width: 1;
+  stroke-dasharray: 6 6;
+}
+
+.plan__dim path {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.55);
+  stroke-width: 1;
+}
+
+.plan__dim text {
+  fill: rgba(255, 255, 255, 0.8);
+  font-family: var(--font-mono);
+  font-size: 0.17px;
+  text-anchor: middle;
+}
+
+.plan__item rect,
+.plan__item circle:not(.plan__badge),
+.plan__item path {
+  fill: rgba(255, 255, 255, 0.07);
+  stroke: #fff;
+  stroke-width: 1.4;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 1.2s var(--ease);
+}
+
+.plan__item--rug rect,
+.plan__item--rug circle:not(.plan__badge) {
+  fill: rgba(242, 180, 138, 0.12);
+  stroke: #f2b48a;
+}
+
+.plan__item--wall path {
+  stroke: #f2b48a;
+  stroke-width: 4;
+}
+
+.plan.is-drawn .plan__wall,
+.plan.is-drawn .plan__item rect,
+.plan.is-drawn .plan__item circle,
+.plan.is-drawn .plan__item path {
+  stroke-dashoffset: 0;
+}
+
+.plan.is-drawn .plan__wallfill,
+.plan.is-drawn .plan__window {
+  opacity: 1;
+}
+
+.plan__badge {
+  fill: #f2b48a;
+}
+
+.plan__n {
+  fill: var(--blueprint);
+  font-family: var(--font-mono);
+  font-size: 0.15px;
+  font-weight: 500;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+/* Таблица позиций */
+.spec__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.spec__table th {
+  padding: 10px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-align: left;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.spec__table td {
+  padding: 11px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  vertical-align: middle;
+}
+
+.spec__table tbody td:first-child {
+  width: 34px;
+  font-family: var(--font-mono);
+  color: #f2b48a;
+}
+
+.spec__table td:nth-child(3),
+.spec__table td:nth-child(4) {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 13px;
+}
+
+.spec__table td:nth-child(4) {
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.spec__table td:last-child,
+.spec__table th:last-child {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.spec__table tfoot td {
+  border-bottom: 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+}
+
+.spec__total td {
+  padding-top: 18px;
+  border-top: 1.5px solid #fff;
+  color: #fff !important;
+  font-family: var(--font-display);
+  font-size: 30px !important;
+}
+
+.spec__sw {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-right: 8px;
+  border-radius: 50%;
+  vertical-align: -1px;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.4);
+}
+
+.spec__form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 28px;
+}
+
+.spec__form input {
+  height: 54px;
+  padding: 0 18px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  font: inherit;
+  font-size: 16px;
+  outline: 0;
+  transition: border-color 0.3s;
+}
+
+.spec__form input::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.spec__form input:focus {
+  border-color: #f2b48a;
+}
+
+.spec__form.is-error input {
+  animation: shake 0.4s;
+}
+
+@keyframes shake {
+  25% {
+    transform: translateX(-6px);
+  }
+  50% {
+    transform: translateX(6px);
+  }
+  75% {
+    transform: translateX(-3px);
+  }
+}
+
+.spec__error {
+  grid-column: 1 / -1;
+  color: #ffb3a1;
+  font-size: 14px;
+}
+
+.spec__sent {
+  display: grid;
+  gap: 4px;
+  margin-top: 28px;
+  padding: 20px 22px;
+  border: 1px dashed rgba(255, 255, 255, 0.5);
+  border-radius: 14px;
+}
+
+.spec__sent span {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+}
+
+.spec__empty {
+  display: grid;
+  justify-items: start;
+  gap: 18px;
+  padding: 40px 0;
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* Штамп листа */
+.spec__stamp {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  width: fit-content;
+  margin: clamp(32px, 5vw, 56px) 0 0 auto;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  font-family: var(--font-mono);
+}
+
+.spec__stamp div {
+  padding: 8px 16px;
+  border-left: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.spec__stamp div:first-child {
+  border-left: 0;
+}
+
+.spec__stamp dt {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+.spec__stamp dd {
+  font-size: 13px;
+}
+
+.spec__foot {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px 24px;
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 28px 0 calc(28px + env(safe-area-inset-bottom));
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.spec__foot a {
+  text-decoration: underline;
+}
+
+@media (max-width: 960px) {
+  .spec__head,
+  .spec__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  /* на телефоне таблица превращается в список строк */
+  .spec__table,
+  .spec__table tbody,
+  .spec__table tfoot {
+    display: block;
+  }
+
+  .spec__table thead {
+    display: none;
+  }
+
+  .spec__table tr {
+    display: grid;
+    grid-template-columns: 30px 1fr auto;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  }
+
+  .spec__table td {
+    border: 0;
+    padding: 12px 4px;
+  }
+
+  .spec__table tbody td:nth-child(3),
+  .spec__table tbody td:nth-child(4),
+  .spec__table tfoot td:nth-child(2) {
+    display: none;
+  }
+
+  .spec__table tfoot tr {
+    grid-template-columns: 1fr auto;
+  }
+
+  .spec__total {
+    border-top: 1.5px solid #fff;
+  }
+
+  .spec__total td {
+    border-top: 0;
+  }
+
+  .spec__total td {
+    font-size: 24px !important;
+  }
+
+  .spec__form {
+    grid-template-columns: 1fr;
+  }
+
+  .spec__stamp {
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+  }
+
+  .spec__stamp div:nth-child(3) {
+    border-left: 0;
+  }
+
+  .spec__stamp div:nth-child(n + 3) {
+    border-top: 1px solid rgba(255, 255, 255, 0.6);
+  }
+}
